@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import greek.dev.challenge.charities.R;
@@ -60,12 +61,31 @@ public class CharitiesResultsActivity extends AppCompatActivity implements Resul
     @BindView(R.id.todo_list_empty_view)
     public LinearLayout emptyView;
 
+    @BindView(R.id.toolbar)
+    public Toolbar toolbar;
+
+    @BindView(R.id.drawer_layout)
+    public DrawerLayout drawer;
+
+    @BindView(R.id.nav_view)
+    public NavigationView navigationView;
+    @BindString(R.string.add_institute)
+    public String addInstitute;
+    @BindString(R.string.yes)
+    public String yesString;
+    @BindString(R.string.no)
+    public String noString;
+    @BindString(R.string.new_form_link)
+    public String googleFormLink;
+    @BindString(R.string.open_dialog)
+    public String openDialog;
+
     private ResultsAdapter mCharitiesAdapter;
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mCharitiesDatabaseReference; //references specific part of the database (charities here)
     private ChildEventListener mChildEventListener;
-    private FirebaseStorage mFirebaseStorage;
+    public static FirebaseStorage mFirebaseStorage;
     private StorageReference mCharitiesPhotosStorageReference;
     private MainViewModel viewModel;
 
@@ -75,14 +95,14 @@ public class CharitiesResultsActivity extends AppCompatActivity implements Resul
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_charities_results_nav);
         ButterKnife.bind(this);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        //Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        //DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+    //    NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
         LinearLayoutManager layoutManager
@@ -251,8 +271,7 @@ public class CharitiesResultsActivity extends AppCompatActivity implements Resul
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         if (id == R.id.nav_home) {
-            Intent i = new Intent(CharitiesResultsActivity.this, MainActivity.class);
-            startActivity(i);
+            goToMain();
         } else if (id == R.id.nav_add_donation) {
             openGoogleform();
         } else if (id == R.id.nav_make_wish) {
@@ -273,19 +292,20 @@ public class CharitiesResultsActivity extends AppCompatActivity implements Resul
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
+            goToMain();
         }
     }
     private void openGoogleform(){
         AlertDialog.Builder builder = new AlertDialog.Builder(CharitiesResultsActivity.this);
-        builder.setTitle("Προσθήκη Ιδρύματος");
-        builder.setMessage(getResources().getString(R.string.open_dialog));
+        builder.setTitle(addInstitute);
+        builder.setMessage(openDialog);
         //Yes Button
-        builder.setPositiveButton("Ναι", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(yesString, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("https://goo.gl/forms/wtJQeDD4VclJhfjk2"));
+                intent.setData(Uri.parse(googleFormLink));
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                 }
@@ -293,7 +313,7 @@ public class CharitiesResultsActivity extends AppCompatActivity implements Resul
             }
         });
         //No Button
-        builder.setNegativeButton("Όχι", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(noString, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -301,5 +321,10 @@ public class CharitiesResultsActivity extends AppCompatActivity implements Resul
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+    private void goToMain(){
+        Intent i = new Intent(CharitiesResultsActivity.this, MainActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT );
+        startActivity(i);
     }
 }
