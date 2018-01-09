@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.util.ColorGenerator;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,21 +34,6 @@ public class WishAdapter extends
         return mContext;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
-        public TextView wishTextView;
-        public TextView authorTextView;
-
-        public ViewHolder(View itemView) {
-            // Stores the itemView in a public final member variable that can be used
-            // to access the context from any ViewHolder instance.
-            super(itemView);
-
-            wishTextView = (TextView) itemView.findViewById(R.id.wish_item_view);
-            authorTextView = (TextView) itemView.findViewById(R.id.author_item_view);
-        }
-    }
-
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
@@ -67,13 +54,33 @@ public class WishAdapter extends
         wishTextView.setText(wish.getWish());
 
         TextView authorTextView = holder.authorTextView;
-        authorTextView.setText(wish.getAuthor());
+        ColorGenerator generator = ColorGenerator.MATERIAL;
 
+        int color=generator.getRandomColor();
+        int color2=generator.getRandomColor();
+        authorTextView.setText("\uf2be "+wish.getAuthor()+ "\n" + "\uf004 "+ wish.getCharityName());
+        authorTextView.setTextColor(color);
+        wishTextView.setBackgroundColor(color);
     }
 
     @Override
     public int getItemCount() {
         return mWishes.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView wishTextView;
+        public TextView authorTextView;
+
+        public ViewHolder(View itemView) {
+            // Stores the itemView in a public final member variable that can be used
+            // to access the context from any ViewHolder instance.
+            super(itemView);
+
+            wishTextView = (TextView) itemView.findViewById(R.id.wish_item_view);
+            authorTextView = (TextView) itemView.findViewById(R.id.author_item_view);
+        }
     }
 
 
